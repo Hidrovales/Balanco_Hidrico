@@ -232,27 +232,27 @@ def gera_serie(dataset, latitude, altitude, Gsc, sigma, G):
     """
     serie_eto = []
     for i in range(len(dataset)):
-        if np.isnan(dataset[i,2]) == False or np.isnan(dataset[i,1]) == False:
+        if np.isnan(dataset[i,2][i]) == False or np.isnan(dataset[i,1]) == False:
             es = Es(dataset[i,4]) #------------> Pressão do vapor de saturação
         else:
             es = Es_medio(dataset[i,2],dataset[i,1]) #------------> Pressão do vapor de saturação
-        ea = Ea(dataset[i,2],dataset[i,1],dataset[i,5]) #--------> Pressão do vapor atual
-        delta = Delta(dataset[i,4]) #----------------------> Declividade da curva de pressão do vapor
+        ea = Ea(dataset[i,2],dataset['TEMPERATURA_MINIMA'],dataset['UMIDADE_RELATIVA'][i]) #--------> Pressão do vapor atual
+        delta = Delta(dataset['TEMPERATURA_MEDIA][i]) #----------------------> Declividade da curva de pressão do vapor
         pressao_atm = Pressao_atm(altitude) #-----------> Pressão atmosférica
         gamma = psicrometrica(pressao_atm) #------------> Constante
-        declinacao_sol = Declinacao_sol(dataset[i,7]) #----> Declinação solar
+        declinacao_sol = Declinacao_sol(dataset['J'][i]) #----> Declinação solar
         omega = Omega(latitude, declinacao_sol) #-------> Ângulo horário pôr-do-sol
-        dr = Dr(dataset[i,7]) #----------------------------> Inverso da distância relativa da terra-sol
+        dr = Dr(dataset['J'][i]) #----------------------------> Inverso da distância relativa da terra-sol
         ra = Ra(latitude, declinacao_sol, omega, dr, Gsc) #--> Radiação extraterrestre para períodos diários
         N = N_insolacao(omega) #------------------------> Duração máxima de insolação no dia
-        rs = Rs(N, dataset[i,3], ra, dataset[i,1], dataset[i,2]) #---------------------> Radiação solar
+        rs = Rs(N, dataset['RADIACAO'][i], ra, dataset[i,1], dataset[i,2]) #---------------------> Radiação solar
         rso = Rso(altitude, ra) #-----------------------> Radiação solar de céu claro
         rns = Rns(rs, albedo=0.23) #--------------------> Radiação de onda curta líquida
-        if np.isnan(dataset[i,2]) == False or np.isnan(dataset[i,1]) == False:
-            rnl = Rnl_medio(dataset[i,4], rs, rso, ea, sigma) #---> Radiação de onda longa líquida
+        if np.isnan(dataset['TEMPERATURA_MINIMA'][i]) == False or np.isnan(dataset['TEMPERATURA_MAXIMA'][i]) == False:
+            rnl = Rnl_medio(dataset['TEMPERATURA_MEDIA][i], rs, rso, ea, sigma) #---> Radiação de onda longa líquida
         else:
-            rnl = Rnl(dataset[i,2],dataset[i,1], rs, rso, ea, sigma) #---> Radiação de onda longa líquida
+            rnl = Rnl(dataset['TEMPERATURA_MAXIMA'][i],dataset['TEMPERATURA_MAXIMA'][i], rs, rso, ea, sigma) #---> Radiação de onda longa líquida
         rn = Rn(rns,rnl) #------------------------------> Radiação líquida
-        serie_eto.append(fao56_penman_monteith(rn, dataset[i,4], dataset[i,6], es, ea, delta, gamma, G)) #---> Evapotranspiração
+        serie_eto.append(fao56_penman_monteith(rn, datasetdataset['TEMPERATURA_MEDIA][i], dataset['VELOCIDADE_VENTO][i], es, ea, delta, gamma, G)) #---> Evapotranspiração
   
     return serie_eto
