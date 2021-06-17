@@ -56,7 +56,7 @@ def calcula_dia(dataset):
       :param dataset: base de dados completa
       :return: base de dados + coluna com o dia do ano
     """
-    date = dataset[:,1]
+    date = dataset.iloc[:,0]
     day_of_year = []
     for i in range(date.shape[0]):
       adate = datetime.strptime(date[i],"%Y-%m-%d")
