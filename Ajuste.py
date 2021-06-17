@@ -1,6 +1,7 @@
 """
 Funções para ajustar a base de dados nos padrões do FAO 56.
 """
+import numpy as np
 
 def conversao_U2(dataset):
     """
