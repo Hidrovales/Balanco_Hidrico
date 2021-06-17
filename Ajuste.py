@@ -38,15 +38,14 @@ def interpola_Temperatura(dataset_Tmax, dataset_Tmin, dataset_Tmean):
     Completa a base de dados em caso de dados faltantes de Temperatura máxima, mínima e média.
     :param dataset_Tmax: coluna de dados com Temperatura máxima.
     :param dataset_Tmin: coluna de dados com Temperatura mínima.
+    :param dataset_Tmean: coluna de dados com Temperatura média.
     :return: coluna de dados com Temperatura máxima, mínima e média.
     """
-    for i in range(dataset_Tmax.shape[0]-1):
-        if np.isnan(dataset_Tmax.loc[i]):
-            dataset_Tmax = dataset_Tmax.interpolate(axis = 0)
-        if np.isnan(dataset_Tmin.loc[i]):
-            dataset_Tmin = dataset_Tmin.interpolate(axis = 0)
-        if np.isnan(dataset_Tmean.loc[i]):
-            dataset_Tmean = (dataset_Tmax + dataset_Tmin)/2
+    dataset_Tmax = dataset_Tmax.interpolate(axis = 0)
+    dataset_Tmin = dataset_Tmin.interpolate(axis = 0)
+    for i in range(dataset_Tmean.shape[0]-1):
+      if np.isnan(dataset_Tmean[i]):
+        dataset_Tmean[i] = (dataset_Tmax[i] + dataset_Tmin[i])/2
     
     return dataset_Tmax, dataset_Tmin, dataset_Tmean
   
