@@ -33,16 +33,20 @@ def completa_U2(dataset):
     return dataset
   
 
-def interpola_Temperatura(dataset_Tmax, dataset_Tmin):
+def interpola_Temperatura(dataset_Tmax, dataset_Tmin, dataset_Tmean):
     """
     Completa a base de dados em caso de dados faltantes de Temperatura máxima, mínima e média.
     :param dataset_Tmax: coluna de dados com Temperatura máxima.
     :param dataset_Tmin: coluna de dados com Temperatura mínima.
     :return: coluna de dados com Temperatura máxima, mínima e média.
     """
-    dataset_Tmax = dataset_Tmax.interpolate(axis = 0)
-    dataset_Tmin = dataset_Tmin.interpolate(axis = 0)
-    dataset_Tmean = (dataset_Tmax + dataset_Tmin)/2
+    for i in range(dataset_Tmax.shape[0]-1):
+        if np.isnan(dataset_Tmax.loc[i]):
+            dataset_Tmax = dataset_Tmax.interpolate(axis = 0)
+        if np.isnan(dataset_Tmin.loc[i]):
+            dataset_Tmin = dataset_Tmin.interpolate(axis = 0)
+        if np.isnan(dataset_Tmean.loc[i]):
+            dataset_Tmean = (dataset_Tmax + dataset_Tmin)/2
     
     return dataset_Tmax, dataset_Tmin, dataset_Tmean
   
