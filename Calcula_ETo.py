@@ -229,7 +229,7 @@ def fao56_penman_monteith(rn, t, u2, es, ea, delta, gamma, G):
     a2 =  a1 / (delta + (gamma * (1 + 0.34 * u2)))
     return a2
     
-def gera_serie(Tmin, Tmax, Tmedia=None, Insolacao=None, Radicao=None, UR, U2, J, Lat, Alt, Gsc, Sigma, G):
+def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Insolacao=None, Radicao=None):
     """
     Gera a série Evapotranspiração de referência (ETo): Equação 6 (FAO 56)
     :parâmetro Tmin: Temperatura mínima do ar em °C
