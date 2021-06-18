@@ -324,7 +324,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
             rs = Radiacao[i]  # Calcula com Radiação
         if np.isnan(Radiacao[i]) == False:
             rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
-        else np.isnan(Insolacao[i]) == False:
+        else:
             rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
 
          #-----------> Radiação solar de céu claro
