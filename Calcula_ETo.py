@@ -134,19 +134,27 @@ def N_insolacao(omega):
     """
     return (24.0 / math.pi) * omega
     
-def Rs(N, n, ra, tmax, tmin):
+def Rs_I(N, n, ra):
     """
     Radiação Solar ( Rs ): Equação 35 (FAO 56)
-    OBS: em caso de ausência de n, será usada a Equação 50 (FAO 56)
     :parâmetro N: duração máxima de insolação no dia [h]. Pode ser calculada pela função N.
     :parâmetro n: Insolação [h].
-    :parâmetro Ra: extraterrestrial radiation [MJ m-2 day-1]. Calculada pela função Ra.
+    :parâmetro ra: extraterrestrial radiation [MJ m-2 day-1]. Calculada pela função Ra.
     :return: radiação solar [MJ m-2 day-1]
     """
-    if np.isnan(n):
-      rs = 0.16 * np.sqrt(tmax - tmin) * ra
-    else:
-      rs = (0.5 * n / N + 0.25) * ra
+    rs = (0.5 * n / N + 0.25) * ra
+    return rs
+
+def Rs_T(ra, tmax, tmin, krs=0.16):
+    """
+    Radiação Solar ( Rs ): Equação 50 (FAO 56)
+    :parâmetro N: duração máxima de insolação no dia [h]. Pode ser calculada pela função N.
+    :parâmetro tmin: Temperatura mínima em °C
+    :parâmetro tmax: Temperatura máxima em °C
+    :parâmetro ra: extraterrestrial radiation [MJ m-2 day-1]. Calculada pela função Ra.
+    :return: radiação solar [MJ m-2 day-1]
+    """
+    rs = krs * np.sqrt(tmax - tmin) * ra
     return rs
     
 def Rso(altitude, ra):
@@ -228,6 +236,25 @@ def fao56_penman_monteith(rn, t, u2, es, ea, delta, gamma, G):
     a1 = (0.408 * (rn - G) * delta) + ((900 / (t + 273)) * u2 * gamma * (es - ea))
     a2 =  a1 / (delta + (gamma * (1 + 0.34 * u2)))
     return a2
+
+def fao56_penman_monteith(rn, tmin[i], tmax[i], U2[i], es, ea, delta, gamma, G):
+    """
+    Calcula a Evapotranspiração de referência (ETo): Equação 6 (FAO 56)
+    :parâmetro rn: Radiação líquida à superfície de cultura [MJ m-2 day-1]. Calculada pela função Rn().
+    :parâmetro Tmin: Temperatura mínima diária em °C.
+    :parâmetro Tmax: Temperatura máxima diária em °C.
+    :parâmetro u2:  Velocidade do vento a 2m de altura [m s-1].
+    :parâmetro es: Pressão do vapor de saturação [kPa]. Calculada pela função Es().
+    :parâmetro ea: Pressão do vapor atual  [kPa]. Calculada pela função Ea().
+    :parâmetro delta: Declividade da curva de pressão do vapor [kPa degC-1]. Calculada pela função Delta().
+    :parâmetro gamma: Constante psicrométrica [kPa deg C]. Calculada pela função psicrométrica().
+    :parâmetro G: Densidade do fluxo de calor do solo  [MJ m-2 day-1].
+    :return: Evapotranspiração de referência (ETo) [mm day-1].
+    """
+    tmedia = tmin + tmax / 2
+    a1 = (0.408 * (rn - G) * delta) + ((900 / (t + 273)) * u2 * gamma * (es - ea))
+    a2 =  a1 / (delta + (gamma * (1 + 0.34 * u2)))
+    return a2
     
 def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Insolacao=None, Radicao=None):
     """
@@ -249,7 +276,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
     
     Estimativa de variáveis em caso de dados faltantes:
      - Tmedia: estima-se através de Tmin e Tmax.
-     - Radiacao: estima-se através da insolação ou Tmax.
+     - Radiacao: estima-se através da insolação ou das temperaturas Tmax e Tmin.
     """
     #Converte a latitude de graus para radianos
     Lat = math.pi/180 * Lat
@@ -266,7 +293,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
         ea = Ea(Tmin[i],Tmax[i],UR[i]) 
         
         #-----------> Declividade da curva de pressão do vapor
-        if np.isnan(Tmedia[i]) == False:
+        if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
             delta = Delta_medio(Tmedia[i]) 
         else:
             delta = Delta(Tmin[i],Tmax[i]) 
@@ -293,13 +320,18 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
         N = N_insolacao(omega)
         
         #------------> Radiação solar
-        rs = Rs(N, Radiacao[i], ra, Tmax[i], Tmin[i]) 
-        
+        if np.isnan(Radiacao[i]) == True:
+            rs = Radiacao[i]  # Calcula com Radiação
+        if np.isnan(Radiacao[i]) == False:
+            rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
+        else np.isnan(Insolacao[i]) == False:
+            rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
+
          #-----------> Radiação solar de céu claro
         rso = Rso(Alt, ra)
         
         #------------> Radiação de onda curta líquida
-        rns = Rns(rs, albedo=0.23)
+        rns = Rns(rs)
         
         #------------> Radiação de onda longa líquida
         if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
@@ -311,6 +343,9 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
         rn = Rn(rns,rnl) 
         
         #------------> Evapotranspiração
-        serie_eto.append(fao56_penman_monteith(rn, Tmedia[i], U2[i], es, ea, delta, gamma, G)) 
+        if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+            serie_eto.append(fao56_penman_monteith(rn, Tmedia[i], U2[i], es, ea, delta, gamma, G)) 
+        else:
+            serie_eto.append(fao56_penman_monteith(rn, Tmin[i], Tmax[i], U2[i], es, ea, delta, gamma, G)) 
   
     return serie_eto
