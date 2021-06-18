@@ -6,16 +6,17 @@ import math
 import pandas as pd
 from datetime import datetime
 
-def conversao_U2(dataset):
+def conversao_U2(dataset, z=10):
     """
-    Conversão da velocidade do vento medida a 10m para 2m com limite de 0.5 m/s
+    Conversão da velocidade do vento medida a 10m para 2m com limite de 0.5 m/s.
     Equação 47 (FAO 56)
-    :param dataset: coluna de dados de velocidade do vento
+    :parametro dataset: coluna de dados de velocidade do vento.
+    :parametro z: altura do anemômetro.
 
     """
     for i in range(dataset.shape[0]-1): 
       if np.isnan(dataset.loc[i]) == False:
-        dataset.loc[i] = dataset.loc[i] * (4.87 / math.log(67.8 * 10 - 5.42)) 
+        dataset.loc[i] = dataset.loc[i] * (4.87 / math.log(67.8 * z - 5.42)) 
         if dataset.loc[i] < .5:
           dataset.loc[i] = .5
           
