@@ -252,7 +252,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
      - Radiacao: estima-se através da insolação ou Tmax.
     """
     #Converte a latitude de graus para radianos
-    latitude = math.pi/180 * latitude_graus 
+    Lat = math.pi/180 * Lat
     
     serie_eto = []
     for i in range(len(Tmin)):
