@@ -256,7 +256,7 @@ def fao56_penman_monteith_T(rn, tmin, tmax, U2, es, ea, delta, gamma, G):
     a2 =  a1 / (delta + (gamma * (1 + 0.34 * u2)))
     return a2
     
-def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Insolacao=None, Radicao=None):
+def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Insolacao=None, Radiacao=None):
     """
     Gera a série Evapotranspiração de referência (ETo): Equação 6 (FAO 56)
     :parâmetro Tmin: Temperatura mínima do ar em °C
@@ -320,12 +320,18 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
         N = N_insolacao(omega)
         
         #------------> Radiação solar
-        if np.isnan(Radiacao[i]) == True:
-            rs = Radiacao[i]  # Calcula com Radiação
-        if np.isnan(Radiacao[i]) == False:
+        if Radiacao == None and Insolacao == None:
+            rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
+        elif Radiacao == None:
             rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
         else:
-            rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
+            if np.isnan(Radiacao[i]) == True:
+                rs = Radiacao[i]  # Calcula com Radiação
+            if np.isnan(Radiacao[i]) == False:
+                rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
+            else:
+                rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
+        
 
          #-----------> Radiação solar de céu claro
         rso = Rso(Alt, ra)
