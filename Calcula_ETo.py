@@ -237,12 +237,12 @@ def fao56_penman_monteith_medio(rn, t, u2, es, ea, delta, gamma, G):
     a2 =  a1 / (delta + (gamma * (1 + 0.34 * u2)))
     return a2
 
-def fao56_penman_monteith_T(rn, tmin[i], tmax[i], U2[i], es, ea, delta, gamma, G):
+def fao56_penman_monteith_T(rn, tmin, tmax, U2, es, ea, delta, gamma, G):
     """
     Calcula a Evapotranspiração de referência (ETo): Equação 6 (FAO 56)
     :parâmetro rn: Radiação líquida à superfície de cultura [MJ m-2 day-1]. Calculada pela função Rn().
-    :parâmetro Tmin: Temperatura mínima diária em °C.
-    :parâmetro Tmax: Temperatura máxima diária em °C.
+    :parâmetro tmin: Temperatura mínima diária em °C.
+    :parâmetro tmax: Temperatura máxima diária em °C.
     :parâmetro u2:  Velocidade do vento a 2m de altura [m s-1].
     :parâmetro es: Pressão do vapor de saturação [kPa]. Calculada pela função Es().
     :parâmetro ea: Pressão do vapor atual  [kPa]. Calculada pela função Ea().
