@@ -220,7 +220,7 @@ def Rn(rns, rnl):
     """
     return rns - rnl
     
-def fao56_penman_monteith(rn, t, u2, es, ea, delta, gamma, G):
+def fao56_penman_monteith_medio(rn, t, u2, es, ea, delta, gamma, G):
     """
     Calcula a Evapotranspiração de referência (ETo): Equação 6 (FAO 56)
     :parâmetro rn: Radiação líquida à superfície de cultura [MJ m-2 day-1]. Calculada pela função Rn().
@@ -237,7 +237,7 @@ def fao56_penman_monteith(rn, t, u2, es, ea, delta, gamma, G):
     a2 =  a1 / (delta + (gamma * (1 + 0.34 * u2)))
     return a2
 
-def fao56_penman_monteith(rn, tmin[i], tmax[i], U2[i], es, ea, delta, gamma, G):
+def fao56_penman_monteith_T(rn, tmin[i], tmax[i], U2[i], es, ea, delta, gamma, G):
     """
     Calcula a Evapotranspiração de referência (ETo): Equação 6 (FAO 56)
     :parâmetro rn: Radiação líquida à superfície de cultura [MJ m-2 day-1]. Calculada pela função Rn().
@@ -344,8 +344,8 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
         
         #------------> Evapotranspiração
         if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
-            serie_eto.append(fao56_penman_monteith(rn, Tmedia[i], U2[i], es, ea, delta, gamma, G)) 
+            serie_eto.append(fao56_penman_monteith_medio(rn, Tmedia[i], U2[i], es, ea, delta, gamma, G)) 
         else:
-            serie_eto.append(fao56_penman_monteith(rn, Tmin[i], Tmax[i], U2[i], es, ea, delta, gamma, G)) 
+            serie_eto.append(fao56_penman_monteith_T(rn, Tmin[i], Tmax[i], U2[i], es, ea, delta, gamma, G)) 
   
     return serie_eto
