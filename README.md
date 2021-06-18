@@ -5,6 +5,7 @@ Para a determinação das necessidades hídricas das culturas, leva-se em conta 
 
 ## Colaboradores:
 
+- Caio Vinícius Leite
 - Marcelo Rossi Vicente
 - Patrícia de Oliveira e Lucas
 - Ronaldo Medeiros dos Santos
