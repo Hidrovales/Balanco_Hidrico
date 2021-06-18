@@ -53,12 +53,22 @@ def Es_medio(tmin, tmax):
     """
     return (Es(tmin) + Es(tmax)) / 2.0
     
-def Delta(tmedia):
+def Delta_medio(tmedia):
     """
     Declividade da curva de pressão do valor de saturação ( Δ ): Equação 13 (FAO 56)
     :parâmetro t: Temperatura média [C].
     :return: declividade da curva de pressão do valor de saturação [kPa C-1]
     """
+    tmp = 4098 * (0.6108 * math.exp((17.27 * tmedia) / (tmedia + 237.3)))
+    return tmp / math.pow((tmedia + 237.3), 2)
+
+def Delta(tmin, tmax):
+    """
+    Declividade da curva de pressão do valor de saturação ( Δ ): Equação 13 (FAO 56)
+    :parâmetro t: Temperatura média [C].
+    :return: declividade da curva de pressão do valor de saturação [kPa C-1]
+    """
+    tmedia = tmin + tmax / 2
     tmp = 4098 * (0.6108 * math.exp((17.27 * tmedia) / (tmedia + 237.3)))
     return tmp / math.pow((tmedia + 237.3), 2)
 
@@ -219,40 +229,88 @@ def fao56_penman_monteith(rn, t, u2, es, ea, delta, gamma, G):
     a2 =  a1 / (delta + (gamma * (1 + 0.34 * u2)))
     return a2
     
-def gera_serie(dataset, latitude, altitude, Gsc, sigma, G):
+def gera_serie(Tmin, Tmax, Tmedia=None, Insolacao=None, Radicao=None, UR, U2, J, Lat, Alt, Gsc, Sigma, G):
     """
     Gera a série Evapotranspiração de referência (ETo): Equação 6 (FAO 56)
-    :parâmetro dataset: dataset com os seguintes dados: 
-        - Temperaturas (máxima, mínima e média) do ar em °C - Tmax, Tmin e Tmean
-        - Umidade Relativa Média - RH
-        - Insolação em Horas - I
-        - Velocidade do vento em m/s - U2
-        - Dia do ano - J
+    :parâmetro Tmin: Temperatura mínima do ar em °C
+    :parâmetro Tmax: Temperatura máxima do ar em °C
+    :parâmetro Tmedia: Temperatura média do ar em °C
+    :parâmetro Insolacao: Insolação em Horas
+    :parâmetro Radiacao: Radição Solar Global em MJ/md
+    :parâmetro UR: Umidade Relativa Média (%)
+    :parâmetro U2: Velocidade do vento em m/s
+    :parâmetro J: Dia do ano
+    :parâmetro Lat: Latitude em graus
+    :parâmetro Alt: Altitude em metros
+    :parâmetro Gsc: Constante Solar em MJ K-4 m-2 dia-1
+    :parâmetro Sigma: Constante Stefan Boltzmann em MJ K-4 m-2 dia-1
+    :parâmetro G: Fluxo de calor do solo para o período de 1 dia ou 10 dias
     :return: Série de Evapotranspiração de referência (ETo) [mm day-1].
+    
+    Estimativa de variáveis em caso de dados faltantes:
+     - Tmedia: estima-se através de Tmin e Tmax.
+     - Radiacao: estima-se através da insolação ou Tmax.
     """
+    #Converte a latitude de graus para radianos
+    latitude = math.pi/180 * latitude_graus 
+    
     serie_eto = []
-    for i in range(len(dataset)):
-        if np.isnan(dataset[i,2][i]) == False or np.isnan(dataset[i,1]) == False:
-            es = Es(dataset[i,4]) #------------> Pressão do vapor de saturação
+    for i in range(len(Tmin)):
+        #------------> Pressão do vapor de saturação
+        if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+            es = Es(Tmedia[i]) 
         else:
-            es = Es_medio(dataset[i,2],dataset[i,1]) #------------> Pressão do vapor de saturação
-        ea = Ea(dataset[i,2],dataset['TEMPERATURA_MINIMA'],dataset['UMIDADE_RELATIVA'][i]) #--------> Pressão do vapor atual
-        delta = Delta(dataset['TEMPERATURA_MEDIA][i]) #----------------------> Declividade da curva de pressão do vapor
-        pressao_atm = Pressao_atm(altitude) #-----------> Pressão atmosférica
-        gamma = psicrometrica(pressao_atm) #------------> Constante
-        declinacao_sol = Declinacao_sol(dataset['J'][i]) #----> Declinação solar
-        omega = Omega(latitude, declinacao_sol) #-------> Ângulo horário pôr-do-sol
-        dr = Dr(dataset['J'][i]) #----------------------------> Inverso da distância relativa da terra-sol
-        ra = Ra(latitude, declinacao_sol, omega, dr, Gsc) #--> Radiação extraterrestre para períodos diários
-        N = N_insolacao(omega) #------------------------> Duração máxima de insolação no dia
-        rs = Rs(N, dataset['RADIACAO'][i], ra, dataset[i,1], dataset[i,2]) #---------------------> Radiação solar
-        rso = Rso(altitude, ra) #-----------------------> Radiação solar de céu claro
-        rns = Rns(rs, albedo=0.23) #--------------------> Radiação de onda curta líquida
-        if np.isnan(dataset['TEMPERATURA_MINIMA'][i]) == False or np.isnan(dataset['TEMPERATURA_MAXIMA'][i]) == False:
-            rnl = Rnl_medio(dataset['TEMPERATURA_MEDIA][i], rs, rso, ea, sigma) #---> Radiação de onda longa líquida
+            es = Es_medio(Tmin[i],Tmax[i]) 
+        
+        #-----------> Pressão do vapor atual
+        ea = Ea(Tmin[i],Tmax[i],UR[i]) 
+        
+        #-----------> Declividade da curva de pressão do vapor
+        if np.isnan(Tmedia[i]) == False:
+            delta = Delta_medio(Tmedia[i]) 
         else:
-            rnl = Rnl(dataset['TEMPERATURA_MAXIMA'][i],dataset['TEMPERATURA_MAXIMA'][i], rs, rso, ea, sigma) #---> Radiação de onda longa líquida
-        rn = Rn(rns,rnl) #------------------------------> Radiação líquida
-        serie_eto.append(fao56_penman_monteith(rn, datasetdataset['TEMPERATURA_MEDIA][i], dataset['VELOCIDADE_VENTO][i], es, ea, delta, gamma, G)) #---> Evapotranspiração
+            delta = Delta(Tmin[i],Tmax[i]) 
+        
+        #-----------> Pressão atmosférica
+        pressao_atm = Pressao_atm(Alt) 
+        
+        #------------> Constante psicrométrica
+        gamma = psicrometrica(pressao_atm)
+        
+        #------------> Declinação solar
+        declinacao_sol = Declinacao_sol(J[i]) 
+        
+        #------------> Ângulo horário pôr-do-sol
+        omega = Omega(Lat, declinacao_sol) 
+        
+        #------------> Inverso da distância relativa da terra-sol
+        dr = Dr(J[i]) 
+        
+        #------------> Radiação extraterrestre para períodos diários
+        ra = Ra(Lat, declinacao_sol, omega, dr, Gsc) 
+        
+         #-----------> Duração máxima de insolação no dia
+        N = N_insolacao(omega)
+        
+        #------------> Radiação solar
+        rs = Rs(N, Radiacao[i], ra, Tmax[i], Tmin[i]) 
+        
+         #-----------> Radiação solar de céu claro
+        rso = Rso(Alt, ra)
+        
+        #------------> Radiação de onda curta líquida
+        rns = Rns(rs, albedo=0.23)
+        
+        #------------> Radiação de onda longa líquida
+        if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+            rnl = Rnl_medio(Tmedia[i], rs, rso, ea, Sigma) 
+        else:
+            rnl = Rnl(Tmin[i],Tmax[i], rs, rso, ea, Sigma) 
+        
+        #------------> Radiação líquida
+        rn = Rn(rns,rnl) 
+        
+        #------------> Evapotranspiração
+        serie_eto.append(fao56_penman_monteith(rn, Tmedia[i], U2[i], es, ea, delta, gamma, G)) 
   
     return serie_eto
