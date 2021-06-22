@@ -281,77 +281,151 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
     #Converte a latitude de graus para radianos
     Lat = math.pi/180 * Lat
     
-    serie_eto = []
-    for i in range(len(Tmin)):
-        #------------> Pressão do vapor de saturação
-        if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
-            es = Es(Tmedia[i]) 
-        else:
-            es = Es_medio(Tmin[i],Tmax[i]) 
-        
-        #-----------> Pressão do vapor atual
-        ea = Ea(Tmin[i],Tmax[i],UR[i]) 
-        
-        #-----------> Declividade da curva de pressão do vapor
-        if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
-            delta = Delta_medio(Tmedia[i]) 
-        else:
-            delta = Delta(Tmin[i],Tmax[i]) 
-        
-        #-----------> Pressão atmosférica
-        pressao_atm = Pressao_atm(Alt) 
-        
-        #------------> Constante psicrométrica
-        gamma = psicrometrica(pressao_atm)
-        
-        #------------> Declinação solar
-        declinacao_sol = Declinacao_sol(J[i]) 
-        
-        #------------> Ângulo horário pôr-do-sol
-        omega = Omega(Lat, declinacao_sol) 
-        
-        #------------> Inverso da distância relativa da terra-sol
-        dr = Dr(J[i]) 
-        
-        #------------> Radiação extraterrestre para períodos diários
-        ra = Ra(Lat, declinacao_sol, omega, dr, Gsc) 
-        
-         #-----------> Duração máxima de insolação no dia
-        N = N_insolacao(omega)
-        
-        #------------> Radiação solar
-        if Radiacao == None and Insolacao == None:
-            rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
-        elif Radiacao == None:
-            rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
-        else:
-            if np.isnan(Radiacao[i]) == True:
-                rs = Radiacao[i]  # Calcula com Radiação
-            if np.isnan(Radiacao[i]) == False:
-                rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
-            else:
-                rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
-        
+    try:
+      serie_eto = []
+      for i in range(len(Tmin)):
+          #------------> Pressão do vapor de saturação
+          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+              es = Es(Tmedia[i]) 
+          else:
+              es = Es_medio(Tmin[i],Tmax[i]) 
+          
+          #-----------> Pressão do vapor atual
+          ea = Ea(Tmin[i],Tmax[i],UR[i]) 
+          
+          #-----------> Declividade da curva de pressão do vapor
+          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+              delta = Delta_medio(Tmedia[i]) 
+          else:
+              delta = Delta(Tmin[i],Tmax[i]) 
+          
+          #-----------> Pressão atmosférica
+          pressao_atm = Pressao_atm(Alt) 
+          
+          #------------> Constante psicrométrica
+          gamma = psicrometrica(pressao_atm)
+          
+          #------------> Declinação solar
+          declinacao_sol = Declinacao_sol(J[i]) 
+          
+          #------------> Ângulo horário pôr-do-sol
+          omega = Omega(Lat, declinacao_sol) 
+          
+          #------------> Inverso da distância relativa da terra-sol
+          dr = Dr(J[i]) 
+          
+          #------------> Radiação extraterrestre para períodos diários
+          ra = Ra(Lat, declinacao_sol, omega, dr, Gsc) 
+          
+          #-----------> Duração máxima de insolação no dia
+          N = N_insolacao(omega)
+          
+          #------------> Radiação solar
+          if Radiacao == None and Insolacao == None:
+              rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
+          elif Radiacao == None:
+              rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
+          else:
+              if np.isnan(Radiacao[i]) == True:
+                  rs = Radiacao[i]  # Calcula com Radiação
+              if np.isnan(Radiacao[i]) == False:
+                  rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
+              else:
+                  rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
+          
 
-         #-----------> Radiação solar de céu claro
-        rso = Rso(Alt, ra)
-        
-        #------------> Radiação de onda curta líquida
-        rns = Rns(rs)
-        
-        #------------> Radiação de onda longa líquida
-        if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
-            rnl = Rnl_medio(Tmedia[i], rs, rso, ea, Sigma) 
-        else:
-            rnl = Rnl(Tmin[i],Tmax[i], rs, rso, ea, Sigma) 
-        
-        #------------> Radiação líquida
-        rn = Rn(rns,rnl) 
-        
-        #------------> Evapotranspiração
-        if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
-            serie_eto.append(fao56_penman_monteith_medio(rn, Tmedia[i], U2[i], es, ea, delta, gamma, G)) 
-        else:
-            serie_eto.append(fao56_penman_monteith_T(rn, Tmin[i], Tmax[i], U2[i], es, ea, delta, gamma, G)) 
-  
+          #-----------> Radiação solar de céu claro
+          rso = Rso(Alt, ra)
+          
+          #------------> Radiação de onda curta líquida
+          rns = Rns(rs)
+          
+          #------------> Radiação de onda longa líquida
+          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+              rnl = Rnl_medio(Tmedia[i], rs, rso, ea, Sigma) 
+          else:
+              rnl = Rnl(Tmin[i],Tmax[i], rs, rso, ea, Sigma) 
+          
+          #------------> Radiação líquida
+          rn = Rn(rns,rnl) 
+          
+          #------------> Evapotranspiração
+          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+              serie_eto.append(fao56_penman_monteith_medio(rn, Tmedia[i], U2[i], es, ea, delta, gamma, G)) 
+          else:
+              serie_eto.append(fao56_penman_monteith_T(rn, Tmin[i], Tmax[i], U2[i], es, ea, delta, gamma, G)) 
+    except:
+          adate = datetime.strptime(DATA,"%Y-%m-%d")
+          J = adate.timetuple().tm_yday
+          serie_eto = 0
+          if np.isnan(Tmin) == False or np.isnan(Tmax) == False:
+              es = Es(Tmedia) 
+          else:
+              es = Es_medio(Tmin,Tmax) 
+          
+          #-----------> Pressão do vapor atual
+          ea = Ea(Tmin,Tmax,UR) 
+          
+          #-----------> Declividade da curva de pressão do vapor
+          if np.isnan(Tmin) == False or np.isnan(Tmax) == False:
+              delta = Delta_medio(Tmedia) 
+          else:
+              delta = Delta(Tmin,Tmax) 
+          
+          #-----------> Pressão atmosférica
+          pressao_atm = Pressao_atm(Alt) 
+          
+          #------------> Constante psicrométrica
+          gamma = psicrometrica(pressao_atm)
+          
+          #------------> Declinação solar
+          declinacao_sol = Declinacao_sol(J) 
+          
+          #------------> Ângulo horário pôr-do-sol
+          omega = Omega(Lat, declinacao_sol) 
+          
+          #------------> Inverso da distância relativa da terra-sol
+          dr = Dr(J) 
+          
+          #------------> Radiação extraterrestre para períodos diários
+          ra = Ra(Lat, declinacao_sol, omega, dr, Gsc) 
+          
+          #-----------> Duração máxima de insolação no dia
+          N = N_insolacao(omega)
+          
+          #------------> Radiação solar
+          if Radiacao == None and Insolacao == None:
+              rs = Rs_T(ra, Tmax, Tmin) # Calcula com temperaturas
+          elif Radiacao == None:
+              rs = Rs_I(N, Insolacao, ra)  # Calcula com Insolação
+          else:
+              if np.isnan(Radiacao) == True:
+                  rs = Radiacao  # Calcula com Radiação
+              if np.isnan(Radiacao) == False:
+                  rs = Rs_I(N, Insolacao, ra)  # Calcula com Insolação
+              else:
+                  rs = Rs_T(ra, Tmax, Tmin) # Calcula com temperaturas
+          
+
+          #-----------> Radiação solar de céu claro
+          rso = Rso(Alt, ra)
+          
+          #------------> Radiação de onda curta líquida
+          rns = Rns(rs)
+          
+          #------------> Radiação de onda longa líquida
+          if np.isnan(Tmin) == False or np.isnan(Tmax) == False:
+              rnl = Rnl_medio(Tmedia, rs, rso, ea, Sigma) 
+          else:
+              rnl = Rnl(Tmin,Tmax, rs, rso, ea, Sigma) 
+          
+          #------------> Radiação líquida
+          rn = Rn(rns,rnl) 
+          
+          #------------> Evapotranspiração
+          if np.isnan(Tmin) == False or np.isnan(Tmax) == False:
+              serie_eto = fao56_penman_monteith_medio(rn, Tmedia, U2, es, ea, delta, gamma, G)
+          else:
+              serie_eto = fao56_penman_monteith_T(rn, Tmin, Tmax, U2, es, ea, delta, gamma, G)
+          return serie_eto
     return serie_eto
