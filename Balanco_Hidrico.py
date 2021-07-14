@@ -164,3 +164,50 @@ def Irrigacao(Din, AFA):
     return AFA
   else:
     return 0
+
+def balanco(theta_fc, theta_wp, p, P, I, eto, tempo, z_etapas, forma_z, kc_etapas, forma_kc, data_in):
+  """
+  Balanço de irrigação
+  :parâmetro theta_fc: capacidade de campo [m^3 m^3].
+  :parâmetro theta_wp: ponto de murcha [m^3 m^3].
+  :parâmetro p: fator de disponibilidade hídrica [0 - 1].
+  :parâmetro P: Precipitação do dia [mm].
+  :parâmetro I: Lâmina de irrigação do dia [mm].
+  :parâmetro eto: Evapotranspiração de referencia [mm].
+  :parâmetro tempo: dicionário com o número de dias de cada fase (inicial, desenvolvimento, media e final).
+  :parâmetro z_etapas: dicionário com as etapas inicial, media e final da profundidade radicular.
+  :parâmetro forma_z: dicionário com a forma de cada etapa (inicial, desenvolvimento, media e final) da profundidade radicular. 
+                      Para constante, etapa recebe True.
+  :parâmetro kc_etapas: dicionário com as etapas inicial, media e final do coeficiente de cultura.
+  :parâmetro forma_kc: dicionário com a forma de cada etapa (inicial, desenvolvimento, media e final) do coeficiente de cultura. 
+                       Para constante, etapa recebe True.
+  :parâmetro data_in: data de início do cultivo.
+  return: Série temporal do déficit de água do solo dos dias de cultivo  [mm]
+  """
+  dias = sum(tempo.values())
+  data_in = datetime.datetime(data_in['ano'], data_in['mes'], data_in['dia'])
+  data_list = [data_in + datetime.timedelta(days=idx) for idx in range(dias)]
+  resultado = []
+  #Informações para o dia 0:
+  etca = 0
+  Zr = interpolacao(data_in, tempo, z_etapas, forma_z, data_in)
+  adt = ADT(theta_fc, theta_wp, Zr)
+  afa = AFA(p , ADT= adt)
+  dfim = afa
+  din = 0
+  j = 0
+  for i in data_list:
+    kc = interpolacao(i, tempo, kc_etapas, forma_kc, data_in)
+    Zr = interpolacao(i, tempo, z_etapas, forma_z, data_in)
+    adt = ADT(theta_fc, theta_wp, Zr)
+    afa = AFA(p , ADT= adt)
+    if i != data_in:
+      din = dfim
+    ks = Ks(din, adt, afa)
+    I = Irrigacao(din, afa)
+    dp = DP(P, I, etca, dfim)
+    etca = Etca(eto[j], kc, ks)
+    dfim = Dfim(dfim, P, I, etca, dp)
+    resultado.append(dfim)
+    j=j+1
+  return resultado
