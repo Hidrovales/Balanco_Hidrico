@@ -165,15 +165,14 @@ def Irrigacao(Din, AFA):
   else:
     return 0
 
-def balanco(theta_fc, theta_wp, p, P, I, eto, tempo, z_etapas, forma_z, kc_etapas, forma_kc, data_in):
+def balanco(theta_fc, theta_wp, p, P, eto, tempo, z_etapas, forma_z, kc_etapas, forma_kc, data_in):
   """
   Balanço de irrigação
   :parâmetro theta_fc: capacidade de campo [m^3 m^3].
   :parâmetro theta_wp: ponto de murcha [m^3 m^3].
   :parâmetro p: fator de disponibilidade hídrica [0 - 1].
-  :parâmetro P: Precipitação do dia [mm].
-  :parâmetro I: Lâmina de irrigação do dia [mm].
-  :parâmetro eto: Evapotranspiração de referencia [mm].
+  :parâmetro P: precipitação do dia [mm].
+  :parâmetro eto: dataframe com a série temporal de Evapotranspiração de referencia [mm] (Coluna 0 - Data, Coluna 1 - Eto).
   :parâmetro tempo: dicionário com o número de dias de cada fase (inicial, desenvolvimento, media e final).
   :parâmetro z_etapas: dicionário com as etapas inicial, media e final da profundidade radicular.
   :parâmetro forma_z: dicionário com a forma de cada etapa (inicial, desenvolvimento, media e final) da profundidade radicular. 
@@ -182,12 +181,17 @@ def balanco(theta_fc, theta_wp, p, P, I, eto, tempo, z_etapas, forma_z, kc_etapa
   :parâmetro forma_kc: dicionário com a forma de cada etapa (inicial, desenvolvimento, media e final) do coeficiente de cultura. 
                        Para constante, etapa recebe True.
   :parâmetro data_in: data de início do cultivo.
-  return: Série temporal do déficit de água do solo dos dias de cultivo  [mm]
+  return: Série temporal do déficit de água do solo dos dias de cultivo [mm].
   """
+  #------------------------------------
   dias = sum(tempo.values())
   data_in = datetime.datetime(data_in['ano'], data_in['mes'], data_in['dia'])
   data_list = [data_in + datetime.timedelta(days=idx) for idx in range(dias)]
-  resultado = []
+  #------------------------------------
+  eto = eto[eto.iloc[:,0] >= data_list[0]]
+  eto = eto[eto.iloc[:,0] <= data_list[-1]]
+  eto = eto.iloc[:,1].values
+  #------------------------------------
   #Informações para o dia 0:
   etca = 0
   Zr = interpolacao(data_in, tempo, z_etapas, forma_z, data_in)
@@ -196,6 +200,8 @@ def balanco(theta_fc, theta_wp, p, P, I, eto, tempo, z_etapas, forma_z, kc_etapa
   dfim = afa
   din = 0
   j = 0
+  #------------------------------------
+  resultado = []
   for i in data_list:
     kc = interpolacao(i, tempo, kc_etapas, forma_kc, data_in)
     Zr = interpolacao(i, tempo, z_etapas, forma_z, data_in)
