@@ -194,10 +194,7 @@ def balanco(theta_fc, theta_wp, p, P, eto, tempo, z_etapas, forma_z, kc_etapas, 
   #------------------------------------
   #Informações para o dia 0:
   etca = 0
-  Zr = interpolacao(data_in, tempo, z_etapas, forma_z, data_in)
-  adt = ADT(theta_fc, theta_wp, Zr)
-  afa = AFA(p , ADT= adt)
-  dfim = afa
+  dfim = 0
   din = 0
   j = 0
   #------------------------------------
