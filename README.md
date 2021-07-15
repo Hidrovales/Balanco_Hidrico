@@ -9,3 +9,23 @@ Para a determinação das necessidades hídricas das culturas, leva-se em conta 
 - Marcelo Rossi Vicente
 - Patrícia de Oliveira e Lucas
 - Ronaldo Medeiros dos Santos
+
+## Publicações:
+*Paper: Título.* [[Link]()]
+
+
+## Referências
+
+
+## Citation
+
+```
+@misc{STSL,
+  author = {Patrícia Lucas, Marcelo Vicente},
+  title = {Simulação das necessidades hídricas das culturas e consumo de água na irrigação},
+  year = {2021},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://https://github.com/Hidrovales/Balanco_Hidrico}},
+}
+```
