@@ -16,6 +16,7 @@ Para a determinação das necessidades hídricas das culturas, leva-se em conta 
 
 ## Referências
 
+Allen, R. G., Pereira, L. S., and Raes, D. (2006). Evapotranspiracióndel cultivo. Guías para la determinación de los requerimientos de agua de los cultivos.Technical report, FAO, Roma, Itália.
 
 ## Citation
 
