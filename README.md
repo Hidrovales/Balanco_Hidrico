@@ -26,6 +26,6 @@ Para a determinação das necessidades hídricas das culturas, leva-se em conta 
   year = {2021},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://https://github.com/Hidrovales/Balanco_Hidrico}},
+  howpublished = {\url{https://github.com/Hidrovales/Balanco_Hidrico}},
 }
 ```
