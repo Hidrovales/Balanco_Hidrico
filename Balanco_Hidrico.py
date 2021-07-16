@@ -178,6 +178,58 @@ def execute(sql,database_path):
                 cursor.execute(sql)
                 return cursor.fetchall()
 
+def plot_balanco(df):
+  """
+  Plotar gráfico do balanço hídrico.
+  :parametro df: dataframe com todas as variáveis geradas pela função balanco.
+  """
+  import seaborn as sns
+  dias = df['PERIODO_INICIAL'] + df['PERIODO_DESENVOLVIMENTO'] + df['PERIODO_MEDIO'] + df['PERIODO_FINAL']
+  data_list = [datetime.datetime.strptime(df['DATA_PLANTIO'], '%Y-%m-%d %H:%M:%S') + datetime.timedelta(days=idx) for idx in range(dias)]
+  datas = []
+  for i in range(len(data_list)):
+    datas.append(str(data_list[i].day) + '/' + str(data_list[i].month) + '/' + str(data_list[i].year))
+  #-------------------------------------------------------------------------------------
+  classe_precipitacao, classe_irrigacao, classe_dp = [], [], []
+  precipitacao, irrigacao, dp = np.frombuffer(df['PRECIPITACAO']), np.frombuffer(df['I']), np.frombuffer(df['DP'])
+  for i in range(precipitacao.shape[0]):
+    classe_precipitacao.append('PRECIPITAÇÃO')
+    classe_irrigacao.append('I')
+    classe_dp.append('DP')
+  column_names = ["DATA", "VALOR", "CLASSE"]
+  df_p = pd.DataFrame(columns = column_names)
+  df_i = pd.DataFrame(columns = column_names)
+  df_dp = pd.DataFrame(columns = column_names)
+  df_p['DATA'], df_p['VALOR'], df_p['CLASSE'] = datas, precipitacao.tolist(), classe_precipitacao
+  df_i['DATA'], df_i['VALOR'], df_i['CLASSE'] = datas, irrigacao.tolist(), classe_irrigacao
+  df_dp['DATA'], df_dp['VALOR'], df_dp['CLASSE'] = datas, dp.tolist(), classe_dp
+  df_p = df_p.append(df_i)
+  df_p = df_p.append(df_dp)
+  #-------------------------------------------------------------------------------------
+  plt.style.use('seaborn')
+  sns.set_style("whitegrid")
+  fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[10,4], dpi=100)
+  colors = ["gold", "dodgerblue", "crimson"]
+  # Set your custom color palette
+  sns.set_palette(sns.color_palette(colors))
+  sns.barplot(x="DATA", y="VALOR", hue="CLASSE", data=df_p, linewidth=0.7, saturation=1)
+  ax2, = ax.plot(np.frombuffer(df['FC']), '-', color = 'blue', ms=5, lw=2, alpha=1, mfc='blue')
+  ax3, = ax.plot(np.frombuffer(df['F']), '-', color = 'red', ms=5, lw=2, alpha=1, mfc='red')
+  ax4, = ax.plot(np.frombuffer(df['PMP']), '-', color = 'black', ms=5, lw=2, alpha=1, mfc='black')
+  ax5, = ax.plot(np.frombuffer(df['UA']), '--o', color = 'green', ms=5, lw=2, alpha=1, mfc='green')
+  plt.tick_params(labelsize=7)
+  ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+  plt.text(10,65,'FC', fontsize=10, color='blue')
+  plt.text(10,53,'UA', fontsize=10, color='green')
+  plt.text(10,41,'F', fontsize=10, color='red')
+  plt.text(10,26,'PMP', fontsize=10, color='black')
+  #plt.xlabel("Horizontes de previsão", fontsize=14)
+  plt.ylabel("mm", fontsize=10)
+  plt.legend(bbox_to_anchor=(1.01, 1), borderaxespad=0)
+  ax.set(xlabel=None) 
+  pass
+  return              
+ 
 def balanco(local, cultura, theta_fc, theta_wp, p, P, eto, periodo, z_etapas, forma_z, kc_etapas, forma_kc, data_in, database_path):
   """
   Balanço de irrigação
@@ -194,7 +246,6 @@ def balanco(local, cultura, theta_fc, theta_wp, p, P, eto, periodo, z_etapas, fo
   :parâmetro forma_kc: dicionário com a forma de cada etapa (inicial, desenvolvimento, media e final) do coeficiente de cultura. 
                        Para constante, etapa recebe True.
   :parâmetro data_in: data de início do cultivo.
-  return: Série temporal do déficit de água do solo dos dias de cultivo [mm].
   """
   #------------------------------------
   dias = sum(periodo.values())
