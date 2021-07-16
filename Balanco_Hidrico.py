@@ -8,6 +8,7 @@ import datetime
 import sqlite3
 import contextlib
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def interpolacao(data, tempo, etapas, forma, data_in):
   """
