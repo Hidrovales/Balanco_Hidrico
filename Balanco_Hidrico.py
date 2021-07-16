@@ -7,6 +7,7 @@ import numpy as np
 import datetime
 import sqlite3
 import contextlib
+import pandas as pd
 
 def interpolacao(data, tempo, etapas, forma, data_in):
   """
