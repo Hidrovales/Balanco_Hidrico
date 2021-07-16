@@ -5,6 +5,8 @@ Referência: FAO 56 (2006)
 
 import numpy as np
 import datetime
+import sqlite3
+import contextlib
 
 def interpolacao(data, tempo, etapas, forma, data_in):
   """
