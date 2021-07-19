@@ -285,7 +285,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
       serie_eto = []
       for i in range(len(Tmin)):
           #------------> Pressão do vapor de saturação
-          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+          if np.isnan(Tmin[i]) == True or np.isnan(Tmax[i]) == True:
               es = Es(Tmedia[i]) 
           else:
               es = Es_medio(Tmin[i],Tmax[i]) 
@@ -294,7 +294,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           ea = Ea(Tmin[i],Tmax[i],UR[i]) 
           
           #-----------> Declividade da curva de pressão do vapor
-          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+          if np.isnan(Tmin[i]) == True or np.isnan(Tmax[i]) == True:
               delta = Delta_medio(Tmedia[i]) 
           else:
               delta = Delta(Tmin[i],Tmax[i]) 
@@ -341,7 +341,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           rns = Rns(rs)
           
           #------------> Radiação de onda longa líquida
-          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+          if np.isnan(Tmin[i]) == True or np.isnan(Tmax[i]) == True:
               rnl = Rnl_medio(Tmedia[i], rs, rso, ea, Sigma) 
           else:
               rnl = Rnl(Tmin[i],Tmax[i], rs, rso, ea, Sigma) 
@@ -350,15 +350,15 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           rn = Rn(rns,rnl) 
           
           #------------> Evapotranspiração
-          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+          if np.isnan(Tmin[i]) == True or np.isnan(Tmax[i]) == True:
               serie_eto.append(fao56_penman_monteith_medio(rn, Tmedia[i], U2[i], es, ea, delta, gamma, G)) 
           else:
               serie_eto.append(fao56_penman_monteith_T(rn, Tmin[i], Tmax[i], U2[i], es, ea, delta, gamma, G)) 
     except:
-          adate = datetime.strptime(DATA,"%Y-%m-%d")
+          adate = datetime.strptime(J,"%Y-%m-%d")
           J = adate.timetuple().tm_yday
           serie_eto = 0
-          if np.isnan(Tmin) == False or np.isnan(Tmax) == False:
+          if np.isnan(Tmin) == True or np.isnan(Tmax) == True:
               es = Es(Tmedia) 
           else:
               es = Es_medio(Tmin,Tmax) 
@@ -367,7 +367,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           ea = Ea(Tmin,Tmax,UR) 
           
           #-----------> Declividade da curva de pressão do vapor
-          if np.isnan(Tmin) == False or np.isnan(Tmax) == False:
+          if np.isnan(Tmin) == True or np.isnan(Tmax) == True:
               delta = Delta_medio(Tmedia) 
           else:
               delta = Delta(Tmin,Tmax) 
@@ -414,7 +414,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           rns = Rns(rs)
           
           #------------> Radiação de onda longa líquida
-          if np.isnan(Tmin) == False or np.isnan(Tmax) == False:
+          if np.isnan(Tmin) == True or np.isnan(Tmax) == True:
               rnl = Rnl_medio(Tmedia, rs, rso, ea, Sigma) 
           else:
               rnl = Rnl(Tmin,Tmax, rs, rso, ea, Sigma) 
@@ -423,7 +423,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           rn = Rn(rns,rnl) 
           
           #------------> Evapotranspiração
-          if np.isnan(Tmin) == False or np.isnan(Tmax) == False:
+          if np.isnan(Tmin) == True or np.isnan(Tmax) == True:
               serie_eto = fao56_penman_monteith_medio(rn, Tmedia, U2, es, ea, delta, gamma, G)
           else:
               serie_eto = fao56_penman_monteith_T(rn, Tmin, Tmax, U2, es, ea, delta, gamma, G)
