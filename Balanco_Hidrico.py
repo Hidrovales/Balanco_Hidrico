@@ -180,7 +180,7 @@ def execute(sql,database_path):
                 cursor.execute(sql)
                 return cursor.fetchall()
 
-def plot_balanco(df):
+def plot_balanco(df, figsize):
   """
   Plotar gráfico do balanço hídrico.
   :parametro df: dataframe com todas as variáveis geradas pela função balanco.
@@ -210,25 +210,21 @@ def plot_balanco(df):
   #-------------------------------------------------------------------------------------
   plt.style.use('seaborn')
   sns.set_style("whitegrid")
-  fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[10,4], dpi=100)
+  fig, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize, dpi=100)
   colors = ["gold", "dodgerblue", "crimson"]
   # Set your custom color palette
   sns.set_palette(sns.color_palette(colors))
   sns.barplot(x="DATA", y="VALOR", hue="CLASSE", data=df_p, linewidth=0.7, saturation=1)
-  ax2, = ax.plot(np.frombuffer(df['FC']), '-', color = 'blue', ms=5, lw=2, alpha=1, mfc='blue')
-  ax3, = ax.plot(np.frombuffer(df['F']), '-', color = 'red', ms=5, lw=2, alpha=1, mfc='red')
-  ax4, = ax.plot(np.frombuffer(df['PMP']), '-', color = 'black', ms=5, lw=2, alpha=1, mfc='black')
-  ax5, = ax.plot(np.frombuffer(df['UA']), '--o', color = 'green', ms=5, lw=2, alpha=1, mfc='green')
+  ax2, = ax.plot(np.frombuffer(df['FC']), '-', color = 'blue', ms=5, lw=2, alpha=1, mfc='blue', label= "CAPACIDADE DE CAMPO")
+  ax5, = ax.plot(np.frombuffer(df['UA']), '--o', color = 'green', ms=5, lw=2, alpha=1, mfc='green', label = 'UMIDADE DO SOLO')
+  ax3, = ax.plot(np.frombuffer(df['F']), '-', color = 'red', ms=5, lw=2, alpha=1, mfc='red', label = 'UMIDADE CRÍTICA')
+  ax4, = ax.plot(np.frombuffer(df['PMP']), '-', color = 'black', ms=5, lw=2, alpha=1, mfc='black', label = 'PONTO DE MURCHA PERMANENTE')
   plt.tick_params(labelsize=7)
   ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
-  plt.text(10,65,'FC', fontsize=10, color='blue')
-  plt.text(10,53,'UA', fontsize=10, color='green')
-  plt.text(10,41,'F', fontsize=10, color='red')
-  plt.text(10,26,'PMP', fontsize=10, color='black')
-  #plt.xlabel("Horizontes de previsão", fontsize=14)
   plt.ylabel("mm", fontsize=10)
   plt.legend(bbox_to_anchor=(1.01, 1), borderaxespad=0)
   ax.set(xlabel=None) 
+  ax.legend()
   pass
   return              
  
