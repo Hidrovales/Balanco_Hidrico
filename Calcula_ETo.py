@@ -252,8 +252,8 @@ def fao56_penman_monteith_T(rn, tmin, tmax, U2, es, ea, delta, gamma, G):
     :return: Evapotranspiração de referência (ETo) [mm day-1].
     """
     tmedia = tmin + tmax / 2
-    a1 = (0.408 * (rn - G) * delta) + ((900 / (tmedia + 273)) * u2 * gamma * (es - ea))
-    a2 =  a1 / (delta + (gamma * (1 + 0.34 * u2)))
+    a1 = (0.408 * (rn - G) * delta) + ((900 / (tmedia + 273)) * U2 * gamma * (es - ea))
+    a2 =  a1 / (delta + (gamma * (1 + 0.34 * U2)))
     return a2
     
 def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Insolacao=None, Radiacao=None):
