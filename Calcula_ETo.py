@@ -252,7 +252,7 @@ def fao56_penman_monteith_T(rn, tmin, tmax, U2, es, ea, delta, gamma, G):
     :return: Evapotranspiração de referência (ETo) [mm day-1].
     """
     tmedia = tmin + tmax / 2
-    a1 = (0.408 * (rn - G) * delta) + ((900 / (t + 273)) * u2 * gamma * (es - ea))
+    a1 = (0.408 * (rn - G) * delta) + ((900 / (tmedia + 273)) * u2 * gamma * (es - ea))
     a2 =  a1 / (delta + (gamma * (1 + 0.34 * u2)))
     return a2
     
