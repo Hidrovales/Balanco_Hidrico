@@ -355,7 +355,8 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           else:
               serie_eto.append(fao56_penman_monteith_T(rn, Tmin[i], Tmax[i], U2[i], es, ea, delta, gamma, G)) 
     except:
-          adate = datetime.strptime(J,"%Y-%m-%d")
+          data = J[6:10] + '-' + J[3:5] + '-' + J[0:2]
+          adate = datetime.strptime(data,"%Y-%m-%d")
           J = adate.timetuple().tm_yday
           serie_eto = 0
           if np.isnan(Tmin) == True or np.isnan(Tmax) == True:
