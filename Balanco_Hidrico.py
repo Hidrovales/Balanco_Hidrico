@@ -140,15 +140,16 @@ def Dfim(Dfim, P, I, ET, DP):
   else:
     return Dfim - (P - RO) - I - CR + ET + DP
 
-def Irrigacao(Din, AFA):
+def Irrigacao(Din, AFA, ET):
   """
   Lâmina de irrigação [mm]
   :parâmetro Din: Déficit de água do solo no inicil do dia [mm].
   :parâmetro AFA: Agua facilmente aproveitável (AFA) da zona radicular do solo [mm].
+  :parâmetro ET: Evapotranspiração do cultivo do dia [mm].
   return: Lâmina de irrigação [mm]
   """
   if Din >= AFA:
-    return AFA
+    return Din + ET
   else:
     return 0
 
@@ -276,9 +277,9 @@ def balanco(local, cultura, theta_fc, theta_wp, p, P, eto, periodo, z_etapas, fo
     if j != 0:
       din = Din(P[j], dfim)
     ks = Ks(din, adt, afa)
-    I = Irrigacao(din, afa)
-    dp = DP(P[j], I, etca, dfim)
     etca = Etca(eto[j], kc, ks)
+    I = Irrigacao(din, afa, etca)
+    dp = DP(P[j], I, etca, dfim)
     dfim = Dfim(dfim, P[j], I, etca, dp)
     FC = Zr * theta_fc * 1000
     PMP = Zr * theta_wp * 1000
