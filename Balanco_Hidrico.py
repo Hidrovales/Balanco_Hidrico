@@ -185,6 +185,7 @@ def plot_balanco(df, figsize):
   """
   Plotar gráfico do balanço hídrico.
   :parametro df: dataframe com todas as variáveis geradas pela função balanco.
+  :parametro figsize: tamanho da figura (x,y).
   """
   import seaborn as sns
   dias = df['PERIODO_INICIAL'] + df['PERIODO_DESENVOLVIMENTO'] + df['PERIODO_MEDIO'] + df['PERIODO_FINAL']
@@ -227,7 +228,46 @@ def plot_balanco(df, figsize):
   ax.set(xlabel=None) 
   ax.legend()
   pass
-  return              
+  return
+
+def plot_extras(df, figsize):
+  """
+  Plotar gráfico com a ETo, ETc e Kc usados no balanço hídrico.
+  :parametro df: dataframe com todas as variáveis geradas pela função balanco.
+  :parametro figsize: tamanho da figura (x,y).
+  """
+  import seaborn as sns
+  eto = np.frombuffer(df['ETO'])
+  etc = np.frombuffer(df['ETCA'])
+  kc = np.frombuffer(df['KC'])
+  dias = df['PERIODO_INICIAL'] + df['PERIODO_DESENVOLVIMENTO'] + df['PERIODO_MEDIO'] + df['PERIODO_FINAL']
+  data_list = [datetime.datetime.strptime(df['DATA_PLANTIO'], '%Y-%m-%d %H:%M:%S') + datetime.timedelta(days=idx) for idx in range(dias)]
+  datas = []
+  for i in range(len(data_list)):
+    datas.append(str(data_list[i].day) + '/' + str(data_list[i].month) + '/' + str(data_list[i].year))
+  #-------------------------------------------------------------------------------------
+  fig, ax1 = plt.subplots(figsize=figsize, dpi=100)
+
+  color = 'tab:red'
+  ax1.set_ylabel('ETo', color=color, fontsize=10)
+  ax1.plot(datas,eto, color=color)
+  plt.plot(datas,etc, color="blue")
+  ax1.tick_params(axis='y', labelcolor=color)
+  plt.xticks(rotation=45)
+  plt.tick_params(labelsize=10)
+  ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+  #-------------------------------------------------------------------------------------
+  color = 'tab:green'
+  ax2.set_ylabel('KC', color=color, fontsize=10)  # we already handled the x-label with ax1
+  ax2.plot(datas,kc, color=color)
+  ax2.tick_params(axis='y', labelcolor=color)
+  ax2.xaxis.set_major_locator(plt.MaxNLocator(15))
+
+  fig.tight_layout()  # otherwise the right y-label is slightly clipped
+  plt.show()
+
+  pass
+  return 
  
 def balanco(local, cultura, theta_fc, theta_wp, p, P, eto, periodo, z_etapas, forma_z, kc_etapas, forma_kc, data_in, database_path):
   """
