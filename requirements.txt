@@ -1,4 +1,7 @@
 streamlit==0.86.0
-pandas==0.22.0
-numpy==1.14.0
-mkl==2019.0
+pandas==1.2.5
+numpy==1.20.3
+mkl==2021.3.0
+sqlite3==3.31.1
+contextlib==0.6.0.post1
+matplotlib==3.3.4
