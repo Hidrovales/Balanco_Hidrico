@@ -2,18 +2,13 @@ import streamlit as st
 import numpy as np
 import pandas as pd 
 import math
-import Calcula_ETo as gse
+import pmfao as gse
 from datetime import date
 import matplotlib.pyplot as plt
 from PIL import Image
 import base64
 from IPython.display import HTML
 
-
-st.write("""
-## Estimativa de Evapotranspiração de Referência
-
-""")
 
 def eto_calc(dataset, metodo):
     latitude_graus = dataset.Latitude[0] #--em graus
@@ -25,10 +20,6 @@ def eto_calc(dataset, metodo):
     sigma = 0.000000004903
     if metodo == 'pmfao':
         eto = gse.gera_serie(dataset,altitude,latitude,Gsc,sigma)
-    elif metodo == 'hg':
-        eto = 0
-    elif metodo == 'pmfaodf':
-        eto = 0
     
     return eto
 
@@ -39,9 +30,9 @@ def imput_FAO():
     Equação de Penman-Monteith:
     """)
     st.latex(r'''ET_{FAO} = \frac{0.408\Delta(R_n-G)+\gamma\frac{900}{T+273}u_2(e_s-e_a)}{\Delta+\gamma(1+ 0.34u_2)}''')
-    tmax = st.text_input(label='Temperatura mínima do ar em °C (obrigatório)', value= 31.4)
+    tmax = st.text_input(label='Temperatura máxima do ar em °C (obrigatório)', value= 31.4)
     tmax = float(tmax)
-    tmin = st.text_input('Temperatura máxima do ar em °C (obrigatório)', value= 19.1)
+    tmin = st.text_input('Temperatura mínima do ar em °C (obrigatório)', value= 19.1)
     tmin = float(tmin)
     tmedia = st.text_input('Temperatura média do ar em °C')
     if tmedia == "":
@@ -163,22 +154,20 @@ def create_download_link(df, filename):
 
 
 def imput():
-
-    st.sidebar.image('https://github.com/Hidrovales/Balanco_Hidrico/blob/main/Figuras/COLORlogovertical.png?raw=true')
+    st.sidebar.image('testeeee.png')
+    st.sidebar.header('HIDROVALES APP')
+    st.sidebar.write('Bem-vindo! Este é o aplicativo educativo da Hidrovales! Aqui, você poderá calcular, de maneira rápida e prática, evapotranspiração de referência (ETo) pontual e sua série temporal e simular o balanço hídrico, além de conhecer um pouco mais sobre nosso trabalho. Selecione qualquer uma das opções abaixo para começar! Para mais informações, acesse: www.hidrovales.com.br.')
 
     st.sidebar.header('Escolha a opção desejada:')
     option_1 = st.sidebar.selectbox('Escolha o que deseja fazer:', ['<Selecione>','Ler sobre ETo', 'Gerar valor único', 'Gerar série temporal de ETo', 'Gerar balanço hídrico'])
-    
+    if option_1:
+        st.write("")
     if option_1 == 'Ler sobre ETo':
         imput_explicacao()
     if option_1 == 'Gerar valor único':
-        option_2 = st.sidebar.selectbox('Escolha o método de estimativa:', ['<Selecione>','PM FAO', 'HG', 'HGDF'])
+        option_2 = st.sidebar.selectbox('Escolha o método de estimativa:', ['<Selecione>','PM FAO'])
         if option_2 == 'PM FAO':
             eto = imput_FAO()
-        elif option_2 == 'HG':
-            eto = imput_HG()
-        elif option_2 == 'HGDF':
-            eto = imput_FAODF()
     if option_1 == 'Gerar série temporal de ETo':
         option_2 = st.sidebar.selectbox('Escolha a estação:', ['<Selecione>','Rio Pardo de Minas'])
         if option_2 == 'Rio Pardo de Minas':
@@ -186,7 +175,7 @@ def imput():
             """
             ### Dados climáticos da estação de Rio Pardo de Minas no estado de Minas Gerais.
             """)
-            df = pd.read_csv('https://raw.githubusercontent.com/Hidrovales/Balanco_Hidrico/main/Datasets/RIO_PARDO_MINAS_AJUSTADO.csv', delimiter = ',')
+            df = pd.read_csv('RIO_PARDO_MINAS_AJUSTADO.csv', delimiter = ',')
             df = df.drop(["Unnamed: 0" ],axis=1)
             showCsv(df)
 
