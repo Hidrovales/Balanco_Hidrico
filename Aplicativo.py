@@ -154,7 +154,7 @@ def create_download_link(df, filename):
 
 
 def imput():
-    st.sidebar.image('https://github.com/Hidrovales/Balanco_Hidrico/blob/main/Figuras/COLORlogohorizontal.png?raw=true')
+    st.sidebar.image('https://github.com/Hidrovales/Balanco_Hidrico/blob/main/Figuras/COLORlogoHORIZONTALsmall.png?raw=true')
     st.sidebar.header('HIDROVALES APP')
     st.sidebar.write('Bem-vindo! Este é o aplicativo educativo da Hidrovales! Aqui, você poderá calcular, de maneira rápida e prática, evapotranspiração de referência (ETo) pontual e sua série temporal e simular o balanço hídrico, além de conhecer um pouco mais sobre nosso trabalho. Selecione qualquer uma das opções abaixo para começar! Para mais informações, acesse: www.hidrovales.com.br.')
 
