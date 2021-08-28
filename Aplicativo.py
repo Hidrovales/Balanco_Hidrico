@@ -172,14 +172,9 @@ def imput():
             
             ## Colaboradores:
 
-            - Caio Vinícius Leite
+            - Eduarda Lucas Araújo
             - Marcelo Rossi Vicente
             - Patrícia de Oliveira e Lucas
-            - Ronaldo Medeiros dos Santos
-
-            ## Publicações:
-            *Paper: Título.* [[Link]()]
-
 
             ## Referências
 
@@ -200,7 +195,7 @@ def imput():
             
             Para mais informações, acesse: [www.hidrovales.com.br](https://hidrovales.com.br/).
             """
-        )
+            )
     if option_1 == 'Ler sobre ETo':
         imput_explicacao()
     if option_1 == 'Gerar valor único':
