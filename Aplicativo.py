@@ -170,6 +170,33 @@ def imput():
             
             Selecione qualquer uma das opções abaixo para começar! 
             
+            ## Colaboradores:
+
+            - Caio Vinícius Leite
+            - Marcelo Rossi Vicente
+            - Patrícia de Oliveira e Lucas
+            - Ronaldo Medeiros dos Santos
+
+            ## Publicações:
+            *Paper: Título.* [[Link]()]
+
+
+            ## Referências
+
+            Allen, R. G., Pereira, L. S., and Raes, D. (2006). Evapotranspiracióndel cultivo. Guías para la determinación de los requerimientos de agua de los cultivos.Technical report, FAO, Roma, Itália.
+
+            ## Citation
+
+            ```
+            @misc{STSL,
+              author = {Eduarda Lucas, Patrícia Lucas, Marcelo Vicente},
+              title = {Aplicativo de cálculo de evapotranspiração de referência e simulação das necessidades hídricas das culturas e consumo de água na irrigação},
+              year = {2021},
+              publisher = {GitHub},
+              journal = {GitHub repository},
+              howpublished = {\url{https://github.com/Hidrovales/Balanco_Hidrico/edit/main/Aplicativo.py}},
+            }
+            
             Para mais informações, acesse: [www.hidrovales.com.br](https://hidrovales.com.br/).
             """
         )
