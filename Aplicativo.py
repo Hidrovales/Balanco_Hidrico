@@ -188,7 +188,7 @@ def imput():
             ## Citation
 
             ```
-            @misc{STSL,
+            @misc{HidrvalesApp,
               author = {Eduarda Lucas, Patrícia Lucas, Marcelo Vicente},
               title = {Aplicativo de cálculo de evapotranspiração de referência e simulação das necessidades hídricas das culturas e consumo de água na irrigação},
               year = {2021},
@@ -196,6 +196,7 @@ def imput():
               journal = {GitHub repository},
               howpublished = {\url{https://github.com/Hidrovales/Balanco_Hidrico/edit/main/Aplicativo.py}},
             }
+            ```
             
             Para mais informações, acesse: [www.hidrovales.com.br](https://hidrovales.com.br/).
             """
