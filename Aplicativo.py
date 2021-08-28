@@ -159,7 +159,19 @@ def imput():
            
     option_1 = st.sidebar.selectbox('Escolha o que deseja fazer:', ['<Selecione>','Ler sobre ETo', 'Gerar valor único', 'Gerar série temporal de ETo', 'Gerar balanço hídrico'])
     if option_1 == '<Selecione>':
-        st.write("Bem-vindo! Este é o aplicativo do Hidrovales! Aqui, você poderá calcular, de maneira rápida e prática, um valor pontual de evapotranspiração de referência (ETo) ou uma série temporal. Você ainda pode simular o balanço hídrico de uma determinada cultura variando o período de platio! Selecione qualquer uma das opções abaixo para começar! Para mais informações, acesse: www.hidrovales.com.br.")
+        st.markdown(
+            """
+            # Olá, seja bem-vindo! 
+            
+            Este é o aplicativo do Hidrovales! Aqui, você poderá calcular, de maneira rápida e prática, um valor pontual de evapotranspiração de referência ($ET_o$)
+            ou uma série temporal. 
+            
+            Você ainda pode simular o balanço hídrico de uma determinada cultura variando o período de platio! Selecione qualquer uma das opções abaixo
+            para começar! 
+            
+            Para mais informações, acesse: [www.hidrovales.com.br](https://hidrovales.com.br/).
+            """
+        )
     if option_1 == 'Ler sobre ETo':
         imput_explicacao()
     if option_1 == 'Gerar valor único':
