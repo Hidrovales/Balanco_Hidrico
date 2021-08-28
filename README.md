@@ -21,7 +21,7 @@ Allen, R. G., Pereira, L. S., and Raes, D. (2006). Evapotranspiracióndel cultiv
 ## Citation
 
 ```
-@misc{STSL,
+@misc{SNHCAI,
   author = {Patrícia Lucas, Marcelo Vicente},
   title = {Simulação das necessidades hídricas das culturas e consumo de água na irrigação},
   year = {2021},
