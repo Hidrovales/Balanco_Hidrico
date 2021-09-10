@@ -75,9 +75,9 @@ def get_dataset(latitude, longitude, start, end):
   """
   import datetime
   from datetime import timedelta  
-  start_datetime = datetime.date(start['ano'], start['mes'], start['dia'])
-  end_datetime = datetime.date(end['ano'], end['mes'], end['dia'])
-  date_nasa_start = str(start['ano']) + str(start['mes']) + str(start['dia'])
+  start_datetime = datetime.date(int(start[:4]), int(start[5:7]), int(start[8:]))
+  end_datetime = datetime.date(int(end[:4]), int(end[5:7]), int(end[8:]))
+  date_nasa_start = start[:4] + start[5:7] + start[8:]
   date_nasa_end = str(end_datetime + timedelta(days=-1))
   date_nasa_end = date_nasa_end[:4] + date_nasa_end[5:7] + date_nasa_end[8:]
   data_nasa = get_nasa_power(latitude, longitude, start = date_nasa_start, end = date_nasa_end)
