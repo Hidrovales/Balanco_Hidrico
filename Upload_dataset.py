@@ -1,3 +1,8 @@
+"""
+Upload da base de dados.
+Os dados são originais da plataforma Google Engine: "UCSB-CHG/CHIRPS/DAILY" e NASA POWER.
+"""
+
 import ee
 import json
 from ipygee import*
