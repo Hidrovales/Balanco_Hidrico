@@ -67,7 +67,6 @@ def get_dataset(latitude, longitude, start, end):
   date_nasa_start = start[:4] + start[5:7] + start[8:]
   date_nasa_end = str(end_datetime + timedelta(days=-1))
   date_nasa_end = date_nasa_end[:4] + date_nasa_end[5:7] + date_nasa_end[8:]
-  print(date_nasa_end)
   data_nasa = get_nasa_power(latitude, longitude, start = date_nasa_start, end = date_nasa_end)
   data_google = get_google_engine(latitude, longitude, start, end)
   date = generate_date(start=start_datetime, number_of_days = (datetime.datetime.strptime(end, "%Y-%m-%d").date() - datetime.datetime.strptime(start, "%Y-%m-%d").date()).days)
