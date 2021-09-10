@@ -60,6 +60,14 @@ def generate_date(start, number_of_days):
 
 
 def get_dataset(latitude, longitude, start, end):
+  """
+  Upload da base de dados
+  :parâmetro latitude: latitude do local.
+  :parâmetro longitude: longitude do local.
+  :parâmetro start: data de início. Formato string = 'YYYY-MM-dd'
+  :parâmetro end: data de final. Formato string = 'YYYY-MM-dd'. 
+  :return: dataframe da base de dados
+  """
   import datetime
   from datetime import timedelta  
   start_datetime = datetime.date(int(start[:4]), int(start[5:7]), int(start[8:]))
