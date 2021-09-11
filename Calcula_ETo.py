@@ -285,7 +285,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
       serie_eto = []
       for i in range(len(Tmin)):
           #------------> Pressão do vapor de saturação
-          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+          if np.isnan(Tmin[i]) == True or np.isnan(Tmax[i]) == True:
               es = Es(Tmedia[i]) 
           else:
               es = Es_medio(Tmin[i],Tmax[i]) 
@@ -294,7 +294,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           ea = Ea(Tmin[i],Tmax[i],UR[i]) 
           
           #-----------> Declividade da curva de pressão do vapor
-          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+          if np.isnan(Tmin[i]) == True or np.isnan(Tmax[i]) == True:
               delta = Delta_medio(Tmedia[i]) 
           else:
               delta = Delta(Tmin[i],Tmax[i]) 
@@ -326,9 +326,9 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           elif Radiacao == None:
               rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
           else:
-              if np.isnan(Radiacao[i]) == True:
-                  rs = Radiacao[i]  # Calcula com Radiação
               if np.isnan(Radiacao[i]) == False:
+                  rs = Radiacao[i]  # Calcula com Radiação
+              if np.isnan(Radiacao[i]) == True:
                   rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
               else:
                   rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
@@ -341,7 +341,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           rns = Rns(rs)
           
           #------------> Radiação de onda longa líquida
-          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+          if np.isnan(Tmin[i]) == True or np.isnan(Tmax[i]) == True:
               rnl = Rnl_medio(Tmedia[i], rs, rso, ea, Sigma) 
           else:
               rnl = Rnl(Tmin[i],Tmax[i], rs, rso, ea, Sigma) 
@@ -350,7 +350,7 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           rn = Rn(rns,rnl) 
           
           #------------> Evapotranspiração
-          if np.isnan(Tmin[i]) == False or np.isnan(Tmax[i]) == False:
+          if np.isnan(Tmin[i]) == True or np.isnan(Tmax[i]) == True:
               serie_eto.append(fao56_penman_monteith_medio(rn, Tmedia[i], U2[i], es, ea, delta, gamma, G)) 
           else:
               serie_eto.append(fao56_penman_monteith_T(rn, Tmin[i], Tmax[i], U2[i], es, ea, delta, gamma, G)) 
