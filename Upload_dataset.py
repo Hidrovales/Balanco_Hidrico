@@ -34,7 +34,7 @@ def get_google_engine(latitude, longitude, start, end):
 def get_nasa_power(latitude, longitude, start, end):
   import os, json, requests
 
-  base_url = r"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN&community=RE&longitude={longitude}&latitude={latitude}&start={start}&end={end}&format=JSON"
+  base_url = r"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN,TOA_SW_DWN&community=RE&longitude={longitude}&latitude={latitude}&start={start}&end={end}&format=JSON"
   api_request_url = base_url.format(longitude=longitude, latitude=latitude, start=start, end=end)
 
   response = requests.get(url=api_request_url, verify=True, timeout=30.00)
