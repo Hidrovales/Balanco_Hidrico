@@ -34,7 +34,7 @@ def get_google_engine(latitude, longitude, start, end):
 def get_nasa_power(latitude, longitude, start, end):
   import os, json, requests
 
-  base_url = r"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,T2M_MAX,T2M_MIN,RH2M,WS2M&community=RE&longitude={longitude}&latitude={latitude}&start={start}&end={end}&format=JSON"
+  base_url = r"https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN&community=RE&longitude={longitude}&latitude={latitude}&start={start}&end={end}&format=JSON"
   api_request_url = base_url.format(longitude=longitude, latitude=latitude, start=start, end=end)
 
   response = requests.get(url=api_request_url, verify=True, timeout=30.00)
@@ -47,7 +47,7 @@ def convert_json_dataframe(file_json):
   import pandas as pd
   final_df = pd.DataFrame()
   df = pd.DataFrame(file_json['properties'])
-  for i in range(5):
+  for i in range(6):
     new_df = pd.DataFrame(list(df['parameter'][i].items()),columns = ['DATA',df.index[i]])
     new_df = new_df.drop(['DATA'], axis=1)
     final_df = pd.concat([final_df, new_df], axis=1) 
