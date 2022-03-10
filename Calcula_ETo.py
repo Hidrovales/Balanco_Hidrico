@@ -320,13 +320,18 @@ def gera_serie(Tmin, Tmax, UR, U2, J, Lat, Alt, Gsc, Sigma, G, Tmedia=None, Inso
           #-----------> Duração máxima de insolação no dia
           N = N_insolacao(omega)
           
-          #------------> Radiação solar               
-          if np.isnan(Radiacao[i]) == False:
-              rs = Radiacao[i]  # Calcula com Radiação
-          elif Insolacao != None:
+          #------------> Radiação solar              
+          if Radiacao == None and Insolacao == None:
+              rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
+          elif Radiacao == None:
               rs = Rs_I(N, Insolacao[i], ra)  # Calcula com Insolação
           else:
-              rs = Rs_T(ra, Tmax[i], Tmin[i]) # Calcula com temperaturas
+              if np.isnan(Radiacao[i]) == True:
+                  rs = Radiacao[i]  # Calcula com Radiação
+              if np.isnan(Radiacao[i]) == False:
+                  rs = Rs_I(N, Insolacao[i], ra[i])  # Calcula com Insolação
+              else:
+                  rs = Rs_T(ra[i], Tmax[i], Tmin[i]) # Calcula com temperaturas
 
           #-----------> Radiação solar de céu claro
           rso = Rso(Alt, ra)
